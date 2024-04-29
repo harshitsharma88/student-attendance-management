@@ -147,7 +147,7 @@ function displayReport(data){
                 <td>${element.id}</th>
                 <td>${element.name}</th>
                 <td>${element.days}</th>
-                <td>${element.percent}</th>
+                <td>${element.percent}%</th>
             </tr>`
     })
     table.innerHTML=html;
