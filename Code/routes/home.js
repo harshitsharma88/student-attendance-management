@@ -4,7 +4,7 @@ const homeController=require('../controllers/home')
 
 router.get('/',homeController.homeGet);
 
-router.post('/set',homeController.homePost);
+router.get('/setup',homeController.setup);
 
 router.get('/getstudent',homeController.getStudent);
 

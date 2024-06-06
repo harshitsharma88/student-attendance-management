@@ -4,18 +4,20 @@ document.querySelector('#srch-btn').addEventListener('click',search)
 function search(){
     const value = document.querySelector('#date').value;
     ul.innerHTML="";
+    
     if(value){
         axios.get(`http://localhost:4000/getdate/${value}`)
         .then(result=>{
-            if(result.data[0].length>0){
+    console.log(result);
+            if(result.data.length>0){
                 const table=document.createElement('table');
                 let html=`<tr>
                 <th>ID</th>
                 <th>Name</th>
                 <th>Attendance</th>
             </tr>`;
-                result.data[0].forEach(element => {
-                    const status=element.present===1?"Present":"X";
+                result.data.forEach(element => {
+                    const status=element.attendances[0].present===true?"Present":"X";
                     html+=`<tr>
                     <td>${element.id}</td>
                     <td>${element.name}</td>
@@ -60,8 +62,9 @@ function submitData(event,records,date){
     if(check){
         axios.post(`http://localhost:4000/postattendance`,{date:date,data:arr})
         .then(result=>{
-            console.log(result);
-            if(result.data=='Success'){
+
+            
+            if(result.status===201){
                 search();
             }
             else{
@@ -80,11 +83,12 @@ function submitData(event,records,date){
 function addElements(date){
     axios.get(`http://localhost:4000/getstudent`)
     .then(result=>{
-        if(result.data[0].length>0){
+        
+        if(result.data.length>0){
             const form =document.createElement('form');
 
              form.onsubmit=(event)=>{
-                submitData(event,result.data[0],date)
+                submitData(event,result.data,date)
              }
             ul.appendChild(form);
             
@@ -96,7 +100,7 @@ function addElements(date){
                 <th> </th>
             </tr>`;
 
-            result.data[0].forEach(element=>{
+            result.data.forEach(element=>{
 
                 html+=`
                 <tr>
@@ -127,6 +131,7 @@ function addElements(date){
 document.querySelector('#fetch-btn').addEventListener('click',()=>{
     axios.get("http://localhost:4000/getreport")
     .then(result=>{
+        console.log(result);
        displayReport(result.data);
     })
     .catch(err=>console.log(err))
@@ -135,7 +140,8 @@ document.querySelector('#fetch-btn').addEventListener('click',()=>{
 
 function displayReport(data){
     ul.innerHTML="";
-    const table=document.createElement('table');
+    if(data.length>0){
+        const table=document.createElement('table');
                 let html=`<tr>
                 <th>ID</th>
                 <th>Name</th>
@@ -147,10 +153,10 @@ function displayReport(data){
                 <td>${element.id}</th>
                 <td>${element.name}</th>
                 <td>${element.days}</th>
-                <td>${element.percent}%</th>
+                <td>${element.percent==null?0:element.percent}%</th>
             </tr>`
     })
     table.innerHTML=html;
-    ul.appendChild(table);
+    ul.appendChild(table);}
 
 }
